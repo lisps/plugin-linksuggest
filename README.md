@@ -1,0 +1,4 @@
+plugin-linksuggest
+==================
+
+Dokuwiki Plugin
