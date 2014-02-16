@@ -1,5 +1,7 @@
 /* DOKUWIKI:include_once vendor/jquery.textcomplete.js */
-
+function linksuggest_escape(text){
+    return jQuery('<div/>').text(text).html()
+}
 jQuery(function(){
     jQuery('#wiki__text').textcomplete({
         match: /\[\[([\w:]+)$/,
@@ -33,14 +35,14 @@ jQuery(function(){
             } else { //file
                 image = 'fileicons/file.png';
             }
-            return '<img src="'+DOKU_BASE+'lib/images/'+image+'"> '+value;
+            return '<img src="'+DOKU_BASE+'lib/images/'+image+'"> '+linksuggest_escape(value);
         },
         index: 1,
         replace: function (element) {
             if(element.slice(-1) === ':'){ //namespace
-                return '[[' + jQuery.text(element).html();
+                return '[[' + linksuggest_escape(element);
             } else { //file
-                return ['[[' + element + '|',']]'];
+                return ['[[' + linksuggest_escape(element) + '|',']]'];
             }
             
         },
