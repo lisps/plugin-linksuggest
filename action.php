@@ -23,6 +23,9 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
 
     /**
      * ajax Request Handler
+     * 
+     * 
+     * 
      */
     function _ajax_call(&$event, $param) {
         if ($event->data !== 'plugin_linksuggest') {
@@ -37,31 +40,32 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
         global $conf;
 
         $page_ns  = trim($INPUT->post->str('ns'));
+        $page_id = trim($INPUT->post->str('id'));
         $q = trim($INPUT->post->str('q'));
         
         
-        $ns = getNS($q);
-        $ns = cleanID($ns);
-        
+        $ns = getNS($q) ;
+        $ns_user = $ns;
         $id = noNS($q);
         $id = cleanID($id);
         
-        $linktype = '';
+        if($ns !== ""){ //in case of [[:dfdf -> absolute link
+            resolve_pageid($page_ns,$ns,$exists);
+        } 
         
-        if($q[0] === ':' || $ns){ //absolute address
+        $dbg =array($ns,$id,$page_ns);
+        $linktype = '';
+        if($q[0] === ':'){ //absolute address
             $linktype = 'absolute';
         } else {
-            $ns = $page_ns;
             $linktype = 'relative';
         }
 
         $nsd  = utf8_encodeFN(str_replace(':','/',$ns));
-        $idd  = utf8_encodeFN(str_replace(':','/',$id));
         
         $data = array();
         
         if($q){
-        
             $opts = array(
                     'depth' => 1,
                     'listfiles' => true,
@@ -73,10 +77,18 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
             if($id) $opts['filematch'] = '^.*\/'.$id;
             if($id) $opts['dirmatch']  = '^.*\/'.$id;
             search($data,$conf['datadir'],'search_universal',$opts,$nsd);
+        }
+        $data_r =array();
+        foreach($data as $entry){
+            $data_r[] = array(
+                'id'=>noNS($entry['id']),
+                'ns'=>($ns_user !== "")?$ns_user:':',
+                'type'=>$entry['type'],
+                'title'=>$entry['title'],
+            );
 
         }
-        
-        echo json_encode(array('linktype'=>$linktype, 'q'=>array($q,$id,$ns),'data'=>$data));
+        echo json_encode(array('data'=>$data_r));
     }
     
 }

@@ -4,47 +4,52 @@ function linksuggest_escape(text){
 }
 jQuery(function(){
     jQuery('#wiki__text').textcomplete({
-        match: /\[\[([\w:]+)$/,
+        match: /\[\[([\w\.:]+)$/,
         search: function (term, callback) {
             jQuery.post(
                 DOKU_BASE + 'lib/exe/ajax.php',
                 {call:'plugin_linksuggest',
                     q:term,
-                    ns:JSINFO['namespace']
+                    ns:JSINFO['namespace'],
+                    id:JSINFO['id'],
                 },
                 function (data) {
-                    console.log(data);
+                    //console.log(data);
                     data=JSON.parse(data);
                     callback(jQuery.map(data.data,function(item){
                         var id = item.id;
-                        if(data.linktype === 'absolute') 
-                            id = ':' + id;
+                        
                         if(item.type === 'd')
                             id = id + ':';
                         
-                        return {id:id,title:item.title};
+                        return {id:id,ns:item.ns,title:item.title,type:item.type};
                     }));
                 }
             );
         },
-        template:function(value){
+        template:function(item){
             var image = '';
-            var title = value.title?' ('+linksuggest_escape(value.title)+')':'';
-            value = value.id;
-            if(value.slice(-1) === ':'){ //namespace
+            var title = item.title?' ('+linksuggest_escape(item.title)+')':'';
+            value = item.id;
+            if(item.type === 'd'){ //namespace
                 image = 'ns.png';
             } else { //file
-                image = 'fileicons/file.png';
+                image = 'page.png';
             }
             return '<img src="'+DOKU_BASE+'lib/images/'+image+'"> '+linksuggest_escape(value) + title;
         },
         index: 1,
-        replace: function (element) {
-            element = element.id;
-            if(element.slice(-1) === ':'){ //namespace
-                return '[[' + linksuggest_escape(element);
+        replace: function (item) {
+            var id = item.id;
+            if(item.ns === ':'){ //absolute link
+                id  = item.ns + id;
+            } else if (item.ns) { //relative link
+                id = item.ns + ':' + id;
+            }
+            if(item.type === 'd'){ //namespace
+                return '[[' + id;
             } else { //file
-                return ['[[' + linksuggest_escape(element) + '|',']]'];
+                return ['[[' + id + '|',(item.title?item.title:'') + ']]'];
             }
             
         },
