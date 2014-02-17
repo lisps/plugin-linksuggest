@@ -3,16 +3,20 @@ plugin-linksuggest
 
 Dokuwiki Plugin
 
-ns:ns1:page1
-ns:page
-page0
+Example:
 
-User is on ns:page
+If following Namespaces are available
+- `ns:ns1:page1`
+- `ns:page`
+- `page0`
 
-Possible links to ns:ns1:page1
-a -> [[ns:ns1:page1]] (absolute)  //not supported by  this plugin
-b -> [[:ns:ns1:page1]] (explizite absolute)
-c  ->  [[ns1:page1]] (relative)
-d -> [[.:ns1:page1]] (explizite relative)
-e -> [[..:ns:ns1:page1]] (relative, with backlink)
+and user is on page `ns:page`
+
+Possible links to `ns:ns1:page1`
+
+- `[[ns:ns1:page1]]` (absolute)  //not supported by  this plugin
+- `[[:ns:ns1:page1]]` (explizite absolute)
+- `[[ns1:page1]` (relative)
+- `[[.:ns1:page1]]` (explizite relative)
+- `[[..:ns:ns1:page1]]` (relative, with backlink)
 
