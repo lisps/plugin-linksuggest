@@ -4,7 +4,7 @@ function linksuggest_escape(text){
 }
 jQuery(function(){
     jQuery('#wiki__text').textcomplete({
-        match: /\[\[([\w\.:]+)$/,
+        match: /\[\[([\w\.:]*)$/,
         search: function (term, callback) {
             jQuery.post(
                 DOKU_BASE + 'lib/exe/ajax.php',
@@ -14,7 +14,6 @@ jQuery(function(){
                     id:JSINFO['id'],
                 },
                 function (data) {
-                    //console.log(data);
                     data=JSON.parse(data);
                     callback(jQuery.map(data.data,function(item){
                         var id = item.id;
@@ -22,15 +21,24 @@ jQuery(function(){
                         if(item.type === 'd')
                             id = id + ':';
                         
-                        return {id:id,ns:item.ns,title:item.title,type:item.type};
+                        return {id:id,
+                            ns:item.ns,
+                            title:item.title,
+                            type:item.type,
+                            rootns:item.rootns
+                            };
                     }));
                 }
             );
         },
-        template:function(item){
+        template:function(item){ //dropdown list
             var image = '';
             var title = item.title?' ('+linksuggest_escape(item.title)+')':'';
-            value = item.id;
+            var value = item.id;
+            
+            if(item.rootns){ //page is in root namespace
+                value = ':'+value;
+            }
             if(item.type === 'd'){ //namespace
                 image = 'ns.png';
             } else { //file
@@ -39,7 +47,7 @@ jQuery(function(){
             return '<img src="'+DOKU_BASE+'lib/images/'+image+'"> '+linksuggest_escape(value) + title;
         },
         index: 1,
-        replace: function (item) {
+        replace: function (item) { //returns what will be put to editor
             var id = item.id;
             if(item.ns === ':'){ //absolute link
                 id  = item.ns + id;

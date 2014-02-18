@@ -36,59 +36,64 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
         $event->preventDefault();
     
         global $INPUT;
-        global $lang;
-        global $conf;
 
-        $page_ns  = trim($INPUT->post->str('ns'));
-        $page_id = trim($INPUT->post->str('id'));
-        $q = trim($INPUT->post->str('q'));
-        
-        
-        $ns = getNS($q) ;
-        $ns_user = $ns;
-        $id = noNS($q);
-        $id = cleanID($id);
-        
-        if($ns !== ""){ //in case of [[:dfdf -> absolute link
-            resolve_pageid($page_ns,$ns,$exists);
-        } 
-        
-        $dbg =array($ns,$id,$page_ns);
-        $linktype = '';
-        if($q[0] === ':'){ //absolute address
-            $linktype = 'absolute';
+        $page_ns  = trim($INPUT->post->str('ns')); //current namespace
+        $page_id = trim($INPUT->post->str('id')); //current id
+        $q = trim($INPUT->post->str('q')); //entered string
+
+        $ns_user = $ns = getNS($q); //namespace of entered string
+        $id = cleanID(noNS($q)); //page of entered string
+
+        if($q && trim($q,'.') === '') { //only "." return
+            $data = array();
+        } else if($ns === ''){ // [[:xxx -> absolute link
+            $data = $this->search_pages($ns,$id);
+        } else if($ns === false && $page_ns) { // [[xxx and not in root-namespace
+            $data = array_merge(
+                    $this->search_pages($page_ns,$id,true),//search in current
+                    $this->search_pages('',$id)            //and in root
+            );
+        } else if (strpos($ns,'.') !== false){ //relative link
+            resolve_pageid($page_ns,$ns,$exists); //resolve the ns based on current id
+            $data = $this->search_pages($ns,$id);
         } else {
-            $linktype = 'relative';
+            $data = $this->search_pages($ns,$id);
         }
 
-        $nsd  = utf8_encodeFN(str_replace(':','/',$ns));
-        
-        $data = array();
-        
-        if($q){
-            $opts = array(
-                    'depth' => 1,
-                    'listfiles' => true,
-                    'listdirs'  => true,
-                    'pagesonly' => true,
-                    'firsthead' => true,
-                    'sneakyacl' => $conf['sneaky_index'],
-                    );
-            if($id) $opts['filematch'] = '^.*\/'.$id;
-            if($id) $opts['dirmatch']  = '^.*\/'.$id;
-            search($data,$conf['datadir'],'search_universal',$opts,$nsd);
-        }
         $data_r =array();
         foreach($data as $entry){
+            
             $data_r[] = array(
-                'id'=>noNS($entry['id']),
-                'ns'=>($ns_user !== "")?$ns_user:':',
-                'type'=>$entry['type'],
+                'id'=>noNS($entry['id']), 
+                'ns'=>($ns_user !== "")?$ns_user:':', //return what user has typed in
+                'type'=>$entry['type'], // d/f
                 'title'=>$entry['title'],
+                'rootns'=>$entry['ns']?0:1,
             );
-
         }
         echo json_encode(array('data'=>$data_r));
+    }
+    
+    protected  function search_pages($ns,$id,$pagesonly=false){
+        global $conf;
+        
+        $data = array();
+        $nsd  = utf8_encodeFN(str_replace(':','/',$ns)); //dir
+        
+        $opts = array(
+                'depth' => 1,
+                'listfiles' => true,
+                'listdirs'  => !$pagesonly,
+                'pagesonly' => true,
+                'firsthead' => true,
+                'sneakyacl' => $conf['sneaky_index'],
+        );
+        if($id) $opts['filematch'] = '^.*\/'.$id;
+        if($id && !$pagesonly) $opts['dirmatch']  = '^.*\/'.$id;
+        search($data,$conf['datadir'],'search_universal',$opts,$nsd);
+        
+        
+        return $data;
     }
     
 }
