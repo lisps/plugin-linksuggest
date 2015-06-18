@@ -46,24 +46,24 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
         if(strpos($q,'#') !== false) {
             list($q,$hash) = explode('#',$q,2);
         }
-
+		$has_hash = $hash === null? false : true;
         $ns_user = $ns = getNS($q); //namespace of entered string
         $id = cleanID(noNS($q)); //page of entered string
 
         if($q && trim($q,'.') === '') { //only "." return
             $data = array();
         } else if($ns === ''){ // [[:xxx -> absolute link
-            $data = $this->search_pages($ns,$id);
+            $data = $this->search_pages($ns,$id,$has_hash);
         } else if($ns === false && $page_ns) { // [[xxx and not in root-namespace
             $data = array_merge(
                     $this->search_pages($page_ns,$id,true),//search in current
-                    $this->search_pages('',$id)            //and in root
+                    $this->search_pages('',$id,$has_hash)            //and in root
             );
         } else if (strpos($ns,'.') !== false){ //relative link
             resolve_pageid($page_ns,$ns,$exists); //resolve the ns based on current id
-            $data = $this->search_pages($ns,$id);
+            $data = $this->search_pages($ns,$id,$has_hash);
         } else {
-            $data = $this->search_pages($ns,$id);
+            $data = $this->search_pages($ns,$id,$has_hash);
         }
         
         

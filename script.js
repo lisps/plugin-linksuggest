@@ -1,12 +1,19 @@
 /* DOKUWIKI:include_once vendor/jquery.textcomplete.js */
 function linksuggest_escape(text){
-    return jQuery('<div/>').text(text).html()
+    return jQuery('<div/>').text(text).html();
 }
 jQuery(function(){
-    jQuery('#wiki__text').textcomplete([{
-        match: /\[\[([\w\.:]*)$/,
+	$editor = jQuery('#wiki__text');
+	$editor.textcomplete([ 
+    { //page search
+    	appentTo: 'body',
+        match: /\[{2}([\w\.:]*)$/,
+        maxCount:50, 
         search: function (term, callback) {
-            jQuery.post(
+        	if($editor.data('linksuggest_off') == 1){
+        		callback([]);return;
+        	}
+        	jQuery.post( 
                 DOKU_BASE + 'lib/exe/ajax.php',
                 {call:'plugin_linksuggest',
                     q:term,
@@ -55,17 +62,27 @@ jQuery(function(){
                 id = item.ns + ':' + id;
             }
             if(item.type === 'd'){ //namespace
+            	setTimeout(function(){$editor.trigger('keyup');},200);
                 return '[[' + id;
             } else { //file
+            	$editor.data('linksuggest_off',1);
+            	
+            	setTimeout(function(){$editor.data('linksuggest_off',0);},500);
                 return ['[[' + id ,'|'+(item.title?item.title:'') + ']]'];
             }
-            
+             
         },
-        cache:true
-    },{
+        //header:'test',
+        footer:'schließen',
+        cache:false
+    },{ //Page Section Search
+    	appentTo: 'body', 
         match: /\[\[([\w\.:]+#[\w\.:]*)$/, 
         index: 1,
         search: function (term, callback) {
+        	if($editor.data('linksuggest_off') == 1){
+        		callback([]);return;
+        	}
             jQuery.post(
                 DOKU_BASE + 'lib/exe/ajax.php',
                 {call:'plugin_linksuggest',
@@ -92,8 +109,11 @@ jQuery(function(){
             var link = item.link;
             var toc = item.toc;
             
+            $editor.data('linksuggest_off',1);
+        	setTimeout(function(){$editor.data('linksuggest_off',0);},500);
+        	
             return '[[' + link + '#' + toc.hid;
         },
-        cache:true
+        cache:false
     }]);
 });
