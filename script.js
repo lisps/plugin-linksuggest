@@ -7,7 +7,7 @@ jQuery(function(){
 	$editor.textcomplete([ 
     { //page search
     	appentTo: 'body',
-        match: /\[{2}([\w\.:]*)$/,
+        match: /\[{2}([\w\-\.:]*)$/,
         maxCount:50, 
         search: function (term, callback) {
         	if($editor.data('linksuggest_off') == 1){
@@ -77,7 +77,7 @@ jQuery(function(){
         cache:false
     },{ //Page Section Search
     	appentTo: 'body', 
-        match: /\[\[([\w\.:]+#[\w\.:]*)$/, 
+        match: /\[\[([\w\-\.:]+#[\w\.:]*)$/, 
         index: 1,
         search: function (term, callback) {
         	if($editor.data('linksuggest_off') == 1){
