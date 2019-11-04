@@ -6,7 +6,7 @@ jQuery(function(){
 	$editor = jQuery('#wiki__text');
 	$editor.textcomplete([ 
     { //page search
-    	appentTo: 'body',
+    	appendTo: 'body',
         match: /\[{2}([\w\-\.:]*)$/,
         maxCount:50, 
         search: function (term, callback) {
@@ -76,7 +76,7 @@ jQuery(function(){
         footer:'schließen',
         cache:false
     },{ //Page Section Search
-    	appentTo: 'body', 
+    	appendTo: 'body', 
         match: /\[\[([\w\-\.:]+#[\w\.:]*)$/, 
         index: 1,
         search: function (term, callback) {
