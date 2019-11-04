@@ -23,7 +23,7 @@ if (typeof jQuery === 'undefined') {
   throw new Error('jQuery.textcomplete requires jQuery');
 }
 
-+function ($) {
+function ($) {
   'use strict';
 
   var warn = function (message) {
