@@ -73,7 +73,7 @@ function ($) {
 
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   // Exclusive execution control utility.
@@ -358,7 +358,7 @@ function ($) {
   $.fn.textcomplete.Completer = Completer;
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   var $window = $(window);
@@ -866,7 +866,7 @@ function ($) {
   $.extend($.fn.textcomplete, commands);
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   // Memoize a search function.
@@ -920,7 +920,7 @@ function ($) {
 
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   var now = Date.now || function () { return new Date().getTime(); };
@@ -1059,7 +1059,7 @@ function ($) {
   $.fn.textcomplete.Adapter = Adapter;
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   // Textarea adapter
@@ -1131,7 +1131,7 @@ function ($) {
   $.fn.textcomplete.Textarea = Textarea;
 }(jQuery);
 
-+function ($) {
+function ($) {
   'use strict';
 
   var sentinelChar = '吶';
@@ -1187,7 +1187,7 @@ function ($) {
 //       fine especially on old IEs.
 //       Any pull requests are REALLY welcome.
 
-+function ($) {
+function ($) {
   'use strict';
 
   // ContentEditable adapter
@@ -1318,7 +1318,7 @@ function ($) {
 //       fine especially on old IEs.
 //       Any pull requests are REALLY welcome.
 
-+function ($) {
+function ($) {
   'use strict';
 
   // CKEditor adapter
