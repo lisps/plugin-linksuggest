@@ -1,4 +1,4 @@
-/* DOKUWIKI:include_once vendor/jquery.textcomplete.js */
+/* DOKUWIKI:include_once vendor/jquery.textcomplete.min.js */
 function linksuggest_escape(text){
     return jQuery('<div/>').text(text).html();
 }
@@ -6,8 +6,8 @@ jQuery(function(){
 	$editor = jQuery('#wiki__text');
 	$editor.textcomplete([ 
     { //page search
-    	appentTo: 'body',
-        match: /\[{2}([\w\.:]*)$/,
+    	appendTo: 'body',
+        match: /\[{2}([\w\-\.:]*)$/,
         maxCount:50, 
         search: function (term, callback) {
         	if($editor.data('linksuggest_off') == 1){
@@ -76,8 +76,8 @@ jQuery(function(){
         footer:'schließen',
         cache:false
     },{ //Page Section Search
-    	appentTo: 'body', 
-        match: /\[\[([\w\.:]+#[\w\.:]*)$/, 
+    	appendTo: 'body', 
+        match: /\[\[([\w\-\.:]+#[\w\.:]*)$/, 
         index: 1,
         search: function (term, callback) {
         	if($editor.data('linksuggest_off') == 1){
