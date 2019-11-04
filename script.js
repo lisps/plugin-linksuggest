@@ -1,4 +1,4 @@
-/* DOKUWIKI:include_once vendor/jquery.textcomplete.js */
+/* DOKUWIKI:include_once vendor/jquery.textcomplete.min.js */
 function linksuggest_escape(text){
     return jQuery('<div/>').text(text).html();
 }
