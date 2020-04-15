@@ -115,5 +115,77 @@ jQuery(function(){
             return '[[' + link + '#' + toc.hid;
         },
         cache:false
+    },{ //media search
+    	appendTo: 'body',
+        match: /\{{2}([\w\-\.:]*)$/,
+        maxCount:50, 
+        search: function (term, callback) {
+        	if($editor.data('linksuggest_off') == 1){
+        		callback([]);return;
+				
+        	}
+        	jQuery.post( 
+                DOKU_BASE + 'lib/exe/ajax.php',
+                {call:'plugin_imglinksuggest',
+                    q:term,
+                    ns:JSINFO['namespace'],
+                    id:JSINFO['id'],
+                },
+                function (data) {
+                    data=JSON.parse(data);
+                    callback(jQuery.map(data.data,function(item){
+                        var id = item.id;
+                        
+                        if(item.type === 'd')
+                            id = id + ':';
+                        
+                        return {id:id,
+                            ns:item.ns,
+                            type:item.type,
+                            rootns:item.rootns
+                            };
+                    }));
+                }
+            );
+        },
+        template:function(item){ //dropdown list
+            var image = '';
+            var value = item.id;
+            
+            if(item.rootns){ //page is in root namespace
+                value = ':'+value;
+            }
+            if(item.type === 'd'){ //namespace
+                image = 'ns.png';
+            } else { //file
+                image = 'media_link_nolnk.png';
+            }
+            return '<img src="'+DOKU_BASE+'lib/images/'+image+'"> '+linksuggest_escape(value);
+        },
+        index: 1,
+        replace: function (item) { //returns what will be put to editor
+            var id = item.id;
+			if(item.rootns) {
+				id = ":"+id;
+			}
+            if(item.ns === ':'){ //absolute link
+                id  = item.ns + id;
+            } else if (item.ns) { //relative link
+                id = item.ns + ':' + id;
+            }
+            if(item.type === 'd'){ //namespace
+            	setTimeout(function(){$editor.trigger('keyup');},200);
+                return '{{' + id;
+            } else { //file
+            	$editor.data('linksuggest_off',1);
+            	
+            	setTimeout(function(){$editor.data('linksuggest_off',0);},500);
+                return ['{{' + id ,'}}'];
+            }
+             
+        },
+        //header:'test',
+        footer:'schließen',
+        cache:false
     }]);
 });
