@@ -58,6 +58,8 @@ jQuery(function(){
             var id = item.id;
             if(item.ns === ':'){ //absolute link
                 id  = item.ns + id;
+            } else if(JSINFO['namespace'] !== '' && item.rootns && item.type === 'f') {
+                id  = ':' + id
             } else if (item.ns) { //relative link
                 id = item.ns + ':' + id;
             }
