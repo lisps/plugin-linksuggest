@@ -8,10 +8,6 @@
 * @author lisps
 */
 
-if (!defined('DOKU_INC')) die();
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
-require_once (DOKU_PLUGIN . 'action.php');
-
 class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
     
     /**
@@ -102,7 +98,7 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
             }
         }
 
-        echo json_encode(array('data'=>$data_r,'deb'=>$deb,'link'=>$link));
+        echo json_encode(array('data'=>$data_r,'link'=>$link));
     }
     /**
      * ajax Request Handler
@@ -159,7 +155,8 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
 		}
         
 
-        echo json_encode(array('data'=>$data_r,'deb'=>$deb,'link'=>$link));
+
+        echo json_encode(array('data'=>$data_r,'link'=>$link));
     }
 
     
