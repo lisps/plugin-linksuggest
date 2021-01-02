@@ -5,7 +5,7 @@ linksuggest Plugin for DokuWiki
 
 All documentation for the linksuggest Plugin is available online at:
 
-  * http://dokuwiki.org/plugin:linksuggest
+  * https://dokuwiki.org/plugin:linksuggest
 
 (c) 2014 by lisps
 
