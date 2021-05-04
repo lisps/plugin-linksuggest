@@ -214,7 +214,7 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
             'sneakyacl' => $conf['sneaky_index'],
         ];
         if ($id) $opts['filematch'] = '^.*\/' . $id;
-        if ($id && false) $opts['dirmatch'] = '^.*\/' . $id;
+        if ($id) $opts['dirmatch'] = '^.*\/' . $id;
         search($data, $conf['mediadir'], 'search_universal', $opts, $nsd);
 
         return $data;
