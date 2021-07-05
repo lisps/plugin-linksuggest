@@ -88,7 +88,7 @@ jQuery(function () {
             cache:  false
         }, { //Page Section Search
             appendTo: 'body',
-            match:    /\[\[([\w\-\.:]+#[\w\.:]*)$/,
+            match:    /\[\[([\w\-\.:]+#[\w\-\.:]*)$/,
             index:    1,
             search:   function (term, callback) {
                 if ($editor.data('linksuggest_off') === 1) {
