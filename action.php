@@ -70,7 +70,7 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
         $data_r = [];
         $link = '';
 
-        if ($hash !== null && count($data) === 1 && $data[0]['type'] === 'f') {
+        if ($hash !== null && $data[0]['type'] === 'f') {
             //if hash is given and a page was found
             $page = $data[0]['id'];
             $meta = p_get_metadata($page, false, METADATA_RENDER_USING_CACHE);
