@@ -146,8 +146,9 @@ jQuery(function () {
                         callback(jQuery.map(data.data, function (item) {
                             let id = item.id;
 
-                            if (item.type === 'd')
+                            if (item.type === 'd') {
                                 id = id + ':';
+                            }
 
                             return {
                                 id:     id,

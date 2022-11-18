@@ -1,7 +1,6 @@
 <?php
 
 use dokuwiki\Extension\Event;
-use dokuwiki\Logger;
 
 /**
  * DokuWiki Plugin linksuggest (Action Component)
@@ -19,7 +18,7 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
      *
      * @param Doku_Event_Handler $controller
      */
-    function register(Doku_Event_Handler $controller) {
+    public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'page_link');
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'media_link');
     }
@@ -29,9 +28,8 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
      * page_link
      *
      * @param $event
-     * @param $param
      */
-    function page_link(&$event, $param) {
+    public function page_link($event) {
         if ($event->data !== 'plugin_linksuggest') {
             return;
         }
@@ -151,10 +149,9 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
      * ajax Request Handler
      * media_link
      *
-     * @param $event
-     * @param $param
+     * @param Event $event
      */
-    function media_link(&$event, $param) {
+    public function media_link($event) {
         if ($event->data !== 'plugin_imglinksuggest') {
             return;
         }
@@ -214,8 +211,8 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
             $matchedMedias = $this->search_medias($resolved_ns, $entered_media);
         } else if ($entered_ns === false && $current_ns) { // [[xxx while current page not in root-namespace
             $matchedMedias = array_merge(
-                $this->search_medias($current_ns, $entered_media, true),//search in current for pages
-                $this->search_medias('', $entered_media)           //search in root both pgs and ns
+                $this->search_medias($current_ns, $entered_media), //search in current for pages
+                $this->search_medias('', $entered_media)       //search in root both pgs and ns
             );
         } else {
             $matchedMedias = $this->search_medias($entered_ns, $entered_media);
