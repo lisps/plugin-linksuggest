@@ -4,12 +4,10 @@ function linksuggest_escape(text) {
 }
 
 jQuery(function () {
-    $editor = jQuery('#wiki__text');
+    let $editor = jQuery('#wiki__text');
     $editor.textcomplete([
         { //page search
-            appendTo: 'body',
-            match:    /\[{2}([\w\-\.:]*)$/,
-            maxCount: 50,
+            match:    /\[{2}([\w\-.:~]*)$/,
             search:   function (term, callback) {
                 if ($editor.data('linksuggest_off') === 1) {
                     callback([]);
@@ -46,6 +44,7 @@ jQuery(function () {
             template: function (item) { //dropdown list
                 let image;
                 let title = item.title ? ' (' + linksuggest_escape(item.title) + ')' : '';
+                let alt = item.type === 'd' ? 'ns' : 'page';
                 let value = item.id;
 
                 if (item.rootns) { //page is in root namespace
@@ -56,17 +55,13 @@ jQuery(function () {
                 } else { //file
                     image = 'page.png';
                 }
-                return '<img src="' + DOKU_BASE + 'lib/images/' + image + '"> ' + linksuggest_escape(value) + title;
+                return '<img alt="' + alt + '" src="' + DOKU_BASE + 'lib/images/' + image + '"> ' + linksuggest_escape(value) + title;
             },
             index:    1,
             replace:  function (item) { //returns what will be put to editor
                 let id = item.id;
-                if (item.ns === ':') { //absolute link
-                    id = item.ns + id;
-                } else if (JSINFO['namespace'] !== '' && item.rootns && item.type === 'f') {
-                    id = ':' + id
-                } else if (item.ns) { //relative link
-                    id = item.ns + ':' + id;
+                if (item.ns) { //prefix with already entered ns
+                    id = item.ns  + id;
                 }
                 if (item.type === 'd') { //namespace
                     setTimeout(function () {
@@ -83,12 +78,9 @@ jQuery(function () {
                 }
 
             },
-            //header:'test',
-            footer: 'schließen',
             cache:  false
         }, { //Page Section Search
-            appendTo: 'body',
-            match:    /\[\[([\w\-\.:]+#[\w\-\.:]*)$/,
+            match:    /\[\[([\w\-.:~]+#[\w\-.:]*)$/,
             index:    1,
             search:   function (term, callback) {
                 if ($editor.data('linksuggest_off') === 1) {
@@ -134,9 +126,7 @@ jQuery(function () {
             },
             cache:   false
         }, { //media search
-            appendTo: 'body',
-            match:    /\{{2}([\w\-\.:]*)$/,
-            maxCount: 50,
+            match:    /\{{2}([\w\-.:~]*)$/,
             search:   function (term, callback) {
                 if ($editor.data('linksuggest_off') === 1) {
                     callback([]);
@@ -156,8 +146,9 @@ jQuery(function () {
                         callback(jQuery.map(data.data, function (item) {
                             let id = item.id;
 
-                            if (item.type === 'd')
+                            if (item.type === 'd') {
                                 id = id + ':';
+                            }
 
                             return {
                                 id:     id,
@@ -172,6 +163,7 @@ jQuery(function () {
             template: function (item) { //dropdown list
                 let image;
                 let value = item.id;
+                let alt = item.type === 'd' ? 'ns' : 'media';
 
                 if (item.rootns) { //page is in root namespace
                     value = ':' + value;
@@ -181,18 +173,13 @@ jQuery(function () {
                 } else { //file
                     image = 'media_link_nolnk.png';
                 }
-                return '<img src="' + DOKU_BASE + 'lib/images/' + image + '"> ' + linksuggest_escape(value);
+                return '<img alt="' + alt + '" src="' + DOKU_BASE + 'lib/images/' + image + '"> ' + linksuggest_escape(value);
             },
             index:    1,
             replace:  function (item) { //returns what will be put to editor
                 let id = item.id;
-                if (item.rootns) {
-                    id = ":" + id;
-                }
-                if (item.ns === ':') { //absolute link
+                if (item.ns) { //prefix with already entered ns
                     id = item.ns + id;
-                } else if (item.ns) { //relative link
-                    id = item.ns + ':' + id;
                 }
                 if (item.type === 'd') { //namespace
                     setTimeout(function () {
@@ -209,8 +196,11 @@ jQuery(function () {
                 }
 
             },
-            //header:'test',
-            footer: 'schließen',
             cache:  false
-        }]);
+        }],{
+        appendTo: 'body',
+        maxCount: 50,
+        //header:'test',
+        //footer: 'schließen'
+    });
 });
