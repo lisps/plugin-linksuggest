@@ -21,6 +21,11 @@ class action_plugin_linksuggest extends DokuWiki_Action_Plugin {
     public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'page_link');
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'media_link');
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, '_add_config');
+    }
+    public function _add_config(&$event, $param) {
+        global $JSINFO;
+        $JSINFO['append_header'] = $this->getConf('append_header');
     }
 
     /**

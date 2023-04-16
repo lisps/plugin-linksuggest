@@ -3,8 +3,15 @@ function linksuggest_escape(text) {
     return jQuery('<div/>').text(text).html();
 }
 
+function charAfterCursor() {
+    let editor = jQuery('#wiki__text');
+    let position = editor.prop('selectionStart');
+    return editor.prop('value').substring(position, position+1);
+}
+
 jQuery(function () {
     let $editor = jQuery('#wiki__text');
+
     $editor.textcomplete([
         { //page search
             match:    /\[{2}([\w\-.:~]*)$/,
@@ -74,7 +81,7 @@ jQuery(function () {
                     setTimeout(function () {
                         $editor.data('linksuggest_off', 0);
                     }, 500);
-                    return ['[[' + id, '|' + (item.title ? item.title : '') + ']]'];
+                    return ['[[' + id, (item.title && (JSINFO["append_header"] === 1) ? '|' + item.title : '') + (charAfterCursor() === ']'? '' : ']]')];
                 }
 
             },
@@ -122,7 +129,17 @@ jQuery(function () {
                     $editor.data('linksuggest_off', 0);
                 }, 500);
 
-                return '[[' + link + '#' + toc.hid;
+                 let endChar = charAfterCursor();
+                 console.log(endChar);
+                 if(endChar === '|' || !toc.title) {
+                  return '[[' + link + '#' + toc.hid;
+                 }else{
+                     if(endChar === ']'){
+                         return '[[' + link + '#' + toc.hid + '|' + toc.title;
+                     }else{
+                         return '[[' + link + '#' + toc.hid + '|' + toc.title + ']]';
+                     }
+                 }
             },
             cache:   false
         }, { //media search
