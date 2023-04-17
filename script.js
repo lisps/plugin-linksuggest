@@ -9,6 +9,16 @@ function charAfterCursor() {
     return editor.prop('value').substring(position, position+1);
 }
 
+function appendTitle(title) {
+    return (title && JSINFO["append_header"] === 1 && charAfterCursor() !== '|')? '|' + title : '';
+}
+function appendSubtitle(title) {
+    return (title && charAfterCursor() !== '|')? '|' + title : '';
+}
+function appendClosing() {
+    return (charAfterCursor() === ']' || charAfterCursor() === '|')? '' : ']]';
+}
+
 jQuery(function () {
     let $editor = jQuery('#wiki__text');
 
@@ -81,7 +91,7 @@ jQuery(function () {
                     setTimeout(function () {
                         $editor.data('linksuggest_off', 0);
                     }, 500);
-                    return ['[[' + id, (item.title && (JSINFO["append_header"] === 1) ? '|' + item.title : '') + (charAfterCursor() === ']'? '' : ']]')];
+                    return ['[[' + id, appendTitle(item.title) + appendClosing()];
                 }
 
             },
@@ -129,17 +139,7 @@ jQuery(function () {
                     $editor.data('linksuggest_off', 0);
                 }, 500);
 
-                 let endChar = charAfterCursor();
-                 console.log(endChar);
-                 if(endChar === '|' || !toc.title) {
-                  return '[[' + link + '#' + toc.hid;
-                 }else{
-                     if(endChar === ']'){
-                         return '[[' + link + '#' + toc.hid + '|' + toc.title;
-                     }else{
-                         return '[[' + link + '#' + toc.hid + '|' + toc.title + ']]';
-                     }
-                 }
+                return '[[' + link + '#' + toc.hid + appendSubtitle(toc.title) + appendClosing();
             },
             cache:   false
         }, { //media search
